@@ -1,0 +1,47 @@
+# --- SECRETS & KEYS (CRITICAL) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+application-secrets.properties
+
+# --- BACKEND (Spring Boot / Gradle) ---
+.gradle/
+build/
+bin/
+out/
+.gradle-status/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# --- FRONTEND (React / Vite / Node) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# --- IDE & EDITORS ---
+.idea/
+.vscode/
+*.iml
+*.iws
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- OS SPECIFIC (Mac/Windows) ---
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
