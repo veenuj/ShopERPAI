@@ -29,4 +29,14 @@ public class AgentController {
         String status = multiAgentService.leoAnalyzeBottlenecks(pending, production);
         return ResponseEntity.ok(Map.of("status", status));
     }
+
+    @PostMapping("/maya/market")
+    public ResponseEntity<Map<String, String>> getMayaMarketingKit(@RequestBody Map<String, String> req) {
+        String name = req.get("name");
+        String description = req.get("description");
+        String unit = req.get("businessUnit");
+        
+        String kit = multiAgentService.mayaCreateMarketingContent(name, description, unit);
+        return ResponseEntity.ok(Map.of("marketingKit", kit));
+    }
 }

@@ -38,4 +38,18 @@ public class MultiAgentService {
         );
         return chatClient.prompt().user(prompt).call().content();
     }
+    // AGENT 3: MAYA (The Marketing Director)
+    // Task: Generate SEO-optimized content for Instagram and YouTube
+    public String mayaCreateMarketingContent(String productName, String description, String businessUnit) {
+        String prompt = String.format(
+            "You are Maya, the expert Marketing Director for %s. " +
+            "We just added a new product to our inventory: '%s'. Details: '%s'. " +
+            "Please create a high-converting marketing kit containing:\n" +
+            "1. An engaging Instagram caption with relevant emojis and exactly 5 trending hashtags.\n" +
+            "2. A catchy YouTube Shorts video description specifically optimized for our channel, 'LAS Solutions', emphasizing the creative art process.\n" +
+            "Keep it punchy, professional, and ready to copy-paste.",
+            businessUnit, productName, description
+        );
+        return chatClient.prompt().user(prompt).call().content();
+    }
 }
