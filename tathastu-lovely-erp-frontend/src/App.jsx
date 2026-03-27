@@ -9,18 +9,31 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 export default function App() {
   const [activeTab, setActiveTab] = useState('analytics');
   
-  // NEW: Pre-loader Animation States
+  // Pre-loader Animation States
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [hideLoader, setHideLoader] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   useEffect(() => {
-    // 1. Wait 1.2 seconds so the user can read the "Opening Shop" text
+    // 1. Smoothly fill the progress bar over 1 second
+    const progressInterval = setInterval(() => {
+      setLoadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 40);
+
+    // 2. Trigger the heavy lift animation slightly after the bar fills
     const openTimer = setTimeout(() => setIsShopOpen(true), 1200);
     
-    // 2. Wait 3.5 seconds total to completely remove the shutter from the DOM after the animation finishes
+    // 3. Remove from DOM
     const hideTimer = setTimeout(() => setHideLoader(true), 3500);
 
     return () => {
+      clearInterval(progressInterval);
       clearTimeout(openTimer);
       clearTimeout(hideTimer);
     };
@@ -51,44 +64,68 @@ export default function App() {
 
   return (
     <>
-      {/* 🛑 NEW: REALISTIC SHOP SHUTTER PRE-LOADER */}
+      {/* 🛑 PREMIUM OBSIDIAN SHUTTER PRE-LOADER */}
       {!hideLoader && (
         <div 
-          className={`fixed inset-0 z-[100] flex flex-col justify-end transition-transform duration-[2000ms] ease-in-out ${isShopOpen ? '-translate-y-full' : 'translate-y-0'}`}
+          // Using a cubic-bezier transition makes it feel heavy at the start, then fast (like a real mechanical lift)
+          className={`fixed inset-0 z-[100] flex flex-col justify-end transition-all duration-[1500ms] ease-[cubic-bezier(0.5,0,0.2,1)] ${
+            isShopOpen ? '-translate-y-full opacity-90 shadow-[0_50px_100px_rgba(0,0,0,0.8)]' : 'translate-y-0 opacity-100'
+          }`}
           style={{
-            // This creates the realistic metallic horizontal ridges of a shop shutter
-            background: 'repeating-linear-gradient(to bottom, #94a3b8, #94a3b8 20px, #cbd5e1 20px, #cbd5e1 22px, #64748b 22px, #64748b 24px)',
-            boxShadow: 'inset 0 -30px 40px rgba(0,0,0,0.6)'
+            // Dark, subtle horizontal metallic etching
+            backgroundColor: '#0f172a',
+            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(255,255,255,0.01) 4px, rgba(255,255,255,0.01) 8px)`
           }}
         >
-          {/* Painted Sign on the Shutter */}
+          {/* Center Brand Console */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <div className="bg-slate-900/90 backdrop-blur-md px-12 py-10 rounded-[3rem] border border-slate-700 text-center shadow-2xl">
-              <span className="text-7xl block mb-6 animate-bounce">🏪</span>
-              <h1 className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase mb-3">
-                ShopERP <span className="text-indigo-500">AI</span>
-              </h1>
-              <p className="text-slate-300 font-bold tracking-[0.3em] text-xs uppercase mb-8">
-                Tathastu & Lovely Art Studio
-              </p>
-              <div className="flex items-center justify-center gap-3 text-indigo-400 font-black tracking-widest text-sm animate-pulse">
-                <span className="w-4 h-4 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></span>
-                ROLLING UP SHUTTER...
+            <div className={`transition-all duration-1000 ${isShopOpen ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}>
+              
+              {/* Glowing AI Icon */}
+              <div className="flex justify-center mb-8">
+                <div className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-2xl border border-indigo-500/30 shadow-[0_0_40px_rgba(99,102,241,0.2)] backdrop-blur-sm">
+                  <div className="absolute inset-0 rounded-2xl animate-pulse bg-indigo-500/20"></div>
+                  <span className="text-4xl relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">✨</span>
+                </div>
               </div>
+
+              {/* Typography */}
+              <h1 className="text-5xl font-black text-white tracking-tight text-center mb-2 drop-shadow-lg">
+                ShopERP <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">AI</span>
+              </h1>
+              <p className="text-slate-400 font-medium tracking-[0.4em] text-xs uppercase text-center mb-12">
+                Tathastu <span className="text-slate-600">|</span> Lovely Art Studio
+              </p>
+
+              {/* Sleek Progress Bar */}
+              <div className="w-64 mx-auto flex flex-col gap-3">
+                <div className="flex justify-between text-[10px] font-bold tracking-widest text-indigo-300/70 uppercase">
+                  <span>System Init</span>
+                  <span>{loadProgress}%</span>
+                </div>
+                <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                  <div 
+                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-400 transition-all duration-75 ease-out rounded-full relative"
+                    style={{ width: `${loadProgress}%` }}
+                  >
+                    <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-r from-transparent to-white/50"></div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
-          {/* Heavy Bottom Bar of the Shutter */}
-          <div className="h-16 bg-slate-800 border-t-4 border-slate-900 flex items-center justify-center shadow-[0_15px_30px_rgba(0,0,0,0.8)] relative z-10">
-            {/* The Shutter Handle */}
-            <div className="w-40 h-6 bg-slate-900 rounded-full border border-slate-700 flex items-center justify-center shadow-inner">
-              <div className="w-32 h-2 bg-slate-950 rounded-full opacity-50"></div>
-            </div>
+          {/* Glowing Cyber-Edge Bottom */}
+          <div className="h-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 shadow-[0_0_30px_rgba(99,102,241,0.5)] relative z-10"></div>
+          <div className="h-8 bg-slate-950 w-full border-t border-slate-800/50 flex items-center justify-center shadow-2xl">
+            {/* Subtle mechanical handle */}
+            <div className="w-32 h-1.5 bg-slate-800 rounded-full"></div>
           </div>
         </div>
       )}
 
-      {/* 🟢 MAIN APP CONTENT (Sits behind the shutter until it rolls up) */}
+      {/* 🟢 MAIN APP CONTENT */}
       <div className="min-h-screen bg-[#f8fafc] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] font-sans text-slate-800 selection:bg-indigo-100">
         
         {/* Glassmorphism Header */}
